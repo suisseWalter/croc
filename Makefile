@@ -48,7 +48,7 @@ clean-deps:
 ############
 # Software #
 ############
-SW_HEX := sw/bin/helloworld.hex
+SW_HEX ?= sw/bin/helloworld.hex
 
 $(SW_HEX): sw/*.c sw/*.h sw/*.S sw/*.ld
 	$(MAKE) -C sw/ compile
@@ -119,8 +119,8 @@ SV_DEFINES     ?= VERILATOR SYNTHESIS COMMON_CELLS_ASSERTS_OFF
 yosys-flist: Bender.lock Bender.yml rtl/*/Bender.yml
 	$(BENDER) script flist-plus $(foreach t,$(BENDER_TARGETS),-t $(t)) $(foreach d,$(SV_DEFINES),-D $(d)=1) > $(PROJ_DIR)/croc.flist
 
-include yosys/yosys.mk
-include openroad/openroad.mk
+-include yosys/yosys.mk
+-include openroad/openroad.mk
 
 klayout/croc_chip.gds: $(OR_OUT)/croc.def klayout/*.sh klayout/*.py
 	./klayout/def2gds.sh

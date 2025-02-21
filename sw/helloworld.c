@@ -5,6 +5,7 @@
 // Authors:
 // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
 
+#include "config.h"
 #include "uart.h"
 #include "print.h"
 #include "timer.h"
@@ -64,5 +65,9 @@ int main() {
     sleep_ms(10);
     printf("Tock\n");
     uart_write_flush();
+
+    // TODO : Define USER_ROM_BASE_ADDR in config.h, read eight 32-bit words from
+    // the ROM and print them using %x
+
     return 1;
 }
