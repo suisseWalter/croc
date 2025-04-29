@@ -127,11 +127,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 
   //NEW
   // User RNG
-  user_frng #(
-    .ObiCfg      ( SbrObiCfg     ),
-    .obi_req_t   ( sbr_obi_req_t ),
-    .obi_rsp_t   ( sbr_obi_rsp_t )
-  ) i_user_frng (
+  user_frng i_user_frng (
     .clk_i,
     .rst_ni,
     .obi_req_i  ( user_frng_obi_req ),

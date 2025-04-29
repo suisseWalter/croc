@@ -17,7 +17,12 @@ set variables {
     tmp_dir     { TMP         tmp             }
     rep_dir     { REPORTS     reports         }
 }
-
+set top_design "croc_chip"
+set sv_flist "../croc.flist"
+set period_ps 10000
+set tmp_dir "tmp"
+set out_dir "out"
+set rep_dir "reports"
 
 # check if an env-var exists and is non-empty
 proc envVarValid {var_name} {
