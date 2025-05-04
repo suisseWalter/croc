@@ -76,7 +76,8 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .NoRules   ( NumDemuxSbrRules               ),
     .addr_t    ( logic[SbrObiCfg.DataWidth-1:0] ),
     .rule_t    ( addr_map_rule_t                ),
-    .Napot     ( 1'b0                           )
+    .Napot     ( 1'b0                           ),
+    .idx_t     ( user_demux_outputs_e           )
   ) i_addr_decode_periphs (
     .addr_i           ( user_sbr_obi_req_i.a.addr ),
     .addr_map_i       ( user_addr_map             ),
