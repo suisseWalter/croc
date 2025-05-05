@@ -30,10 +30,10 @@ package user_pkg;
   localparam int unsigned NumDemuxSbr       = NumDemuxSbrRules + 1; // additional OBI error, used for signal arrays
 
 
-  localparam bit [31:0] UserFrngAddrOffset = UserRomAddrOffset + UserRomAddrRange;
+  localparam bit [31:0] UserFrngAddrOffset = UserRomAddrOffset + UserRomAddrRange; // 32'h2000_1000;
   localparam bit [31:0] UserFrngAddrRange  = 32'h0000_1000;
 
-    localparam bit [31:0] UserTrngAddrOffset = UserFrngAddrOffset + UserRomAddrRange;
+    localparam bit [31:0] UserTrngAddrOffset = UserFrngAddrOffset + UserRomAddrRange; // 32'h2000_2000;
   localparam bit [31:0] UserTrngAddrRange  = 32'h0000_1000;
 x
 

@@ -59,6 +59,20 @@ int main() {
     printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
     uart_write_flush();
 
+    for (int i = 0; i < 2; i++) {
+        uint32_t val = *reg32(USER_TRNG_BASE_ADDR, i * 4);
+        printf("ROM word %x: %x\n", i, val);
+        uart_write_flush();
+    }
+
+    for (int i = 0; i < 2; i++) {
+        uint32_t val = *reg32(USER_FRNG_BASE_ADDR, i * 4);
+        printf("ROM word %x: %x\n", i, val);
+        uart_write_flush();
+    }
+
+
+
     // using the timer
     printf("Tick\n");
     sleep_ms(10);

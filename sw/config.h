@@ -8,8 +8,8 @@
 #pragma once
 
 // Address map
-#define SOCCTRL_BASE_ADDR 0x03000000
-#define UART_BASE_ADDR    0x03002000
+    #define SOCCTRL_BASE_ADDR 0x03000000
+    #define UART_BASE_ADDR    0x03002000
 #define GPIO_BASE_ADDR    0x03005000
 #define TIMER_BASE_ADDR   0x0300A000
 
@@ -22,3 +22,7 @@
 #define UART_BYTE_ALIGN 4
 #define UART_FREQ       TB_FREQUENCY
 #define UART_BAUD       TB_BAUDRATE
+
+// User map
+#define USER_TRNG_BASE_ADDR  0x20001000
+#define USER_FRNG_BASE_ADDR  0x20002000
