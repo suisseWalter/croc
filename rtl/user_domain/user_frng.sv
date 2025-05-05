@@ -9,11 +9,11 @@ module user_frng import croc_pkg::*; (
   // 32-bit LFSR
   logic [31:0] lfsr_q, lfsr_d;
 
-  // 2-cycle response registers
-  logic req_d, req_q; // Request valid
-  logic we_d, we_q;   // Write enable
-  logic [SbrObiCfg.IdWidth-1:0] id_d, id_q; // Request ID
-  logic [31:0] rsp_data_d, rsp_data_q; // Response data
+  //Increased to  2-cycle, as per ex3 - this seems to be required
+  logic req_d, req_q; 
+  logic we_d, we_q;   
+  logic [SbrObiCfg.IdWidth-1:0] id_d, id_q; 
+  logic [31:0] rsp_data_d, rsp_data_q; 
   logic rsp_err_d, rsp_err_q;
 
   // LFSR feedback polynomial (x^32 + x^22 + x^2 + x + 1)
