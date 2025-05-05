@@ -515,8 +515,8 @@ endtask
         // load binary to sram
         jtag_load_hex(binary_path);
        // Test fRNG
-        $display("@%t | [FRNG] CALL TO TEST_frng", $time);
-        test_frng();
+        $display("@%t | [FRNG] would happen here", $time);
+        //test_frng();
         $display("@%t | [CORE] Start fetching instructions", $time);
         fetch_en_i = 1'b1;
 

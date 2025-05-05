@@ -21,7 +21,7 @@ package user_pkg;
   // User Subordinate Address maps ////
   /////////////////////////////////////
 
-  localparam int unsigned NumUserDomainSubordinates = 2;
+  localparam int unsigned NumUserDomainSubordinates = 1; //2;
 
   localparam bit [31:0] UserRomAddrOffset   = croc_pkg::UserBaseAddr; // 32'h2000_0000;
   localparam bit [31:0] UserRomAddrRange    = 32'h0000_1000;          // every subordinate has at least 4KB
@@ -33,21 +33,21 @@ package user_pkg;
   localparam bit [31:0] UserFrngAddrOffset = UserRomAddrOffset + UserRomAddrRange; // 32'h2000_1000;
   localparam bit [31:0] UserFrngAddrRange  = 32'h0000_1000;
 
-  localparam bit [31:0] UserTrngAddrOffset = UserFrngAddrOffset + UserRomAddrRange; // 32'h2000_2000;
-  localparam bit [31:0] UserTrngAddrRange  = 32'h0000_1000;
+ // localparam bit [31:0] UserTrngAddrOffset = UserFrngAddrOffset + UserRomAddrRange; // 32'h2000_2000;
+  //localparam bit [31:0] UserTrngAddrRange  = 32'h0000_1000;
 
 
   // Enum for bus indices
   typedef enum int {
     UserError = 0,
-    UserFrng = 1,
-    UserTrng = 2
+    UserFrng = 1 //,
+    //UserTrng = 2
   } user_demux_outputs_e;
 
   // Address rules given to address decoder
   localparam croc_pkg::addr_map_rule_t [NumDemuxSbrRules-1:0] user_addr_map = '{    
-    '{ idx:UserFrng, start_addr: UserFrngAddrOffset, end_addr: UserFrngAddrOffset + UserFrngAddrRange},
-    '{ idx:UserTrng, start_addr: UserTrngAddrOffset, end_addr: UserTrngAddrOffset + UserTrngAddrRange}
+    '{ idx:UserFrng, start_addr: UserFrngAddrOffset, end_addr: UserFrngAddrOffset + UserFrngAddrRange} //,
+    //'{ idx:UserTrng, start_addr: UserTrngAddrOffset, end_addr: UserTrngAddrOffset + UserTrngAddrRange}
   };
 
 endpackage

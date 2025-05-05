@@ -60,14 +60,14 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   // RNG Subordinate Bus
   sbr_obi_req_t user_frng_obi_req;
   sbr_obi_rsp_t user_frng_obi_rsp;
-    sbr_obi_req_t user_trng_obi_req;
-  sbr_obi_rsp_t user_trng_obi_rsp;
+  // sbr_obi_req_t user_trng_obi_req;
+  //sbr_obi_rsp_t user_trng_obi_rsp;
 
   assign user_frng_obi_req               = all_user_sbr_obi_req[UserFrng];
   assign all_user_sbr_obi_rsp[UserFrng]  = user_frng_obi_rsp;
 
-  assign user_trng_obi_req               = all_user_sbr_obi_req[UserTrng];
-  assign all_user_sbr_obi_rsp[UserTrng]  = user_trng_obi_rsp;
+  //assign user_trng_obi_req               = all_user_sbr_obi_req[UserTrng];
+  //assign all_user_sbr_obi_rsp[UserTrng]  = user_trng_obi_rsp;
 
 
   //-----------------------------------------------------------------------------------------------
@@ -140,12 +140,12 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .obi_rsp_o  ( user_frng_obi_rsp )
   );
 
-    user_trng i_user_trng (
+    /*user_trng i_user_trng (
     .clk_i,
     .rst_ni,
     .obi_req_i  ( user_trng_obi_req ),
     .obi_rsp_o  ( user_trng_obi_rsp )
-  );
+  );*/
 
 
 

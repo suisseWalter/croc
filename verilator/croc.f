@@ -291,7 +291,6 @@
 ../rtl/gpio/gpio.sv
 ../rtl/croc_domain.sv
 ../rtl/user_domain/user_frng.sv
-../rtl/user_domain/user_trng.sv
 ../rtl/user_domain.sv
 ../rtl/croc_soc.sv
 

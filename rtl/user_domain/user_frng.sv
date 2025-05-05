@@ -9,9 +9,18 @@ module user_frng import croc_pkg::*; (
   // 32-bit LFSR
   logic [31:0] lfsr_q, lfsr_d;
 
+  // 2-cycle response registers
+  logic req_d, req_q; // Request valid
+  logic we_d, we_q;   // Write enable
+  logic [SbrObiCfg.IdWidth-1:0] id_d, id_q; // Request ID
+  logic [31:0] rsp_data_d, rsp_data_q; // Response data
+  logic rsp_err_d, rsp_err_q;
+
   // LFSR feedback polynomial (x^32 + x^22 + x^2 + x + 1)
   always_comb begin
-    lfsr_d = {lfsr_q[30:0], lfsr_q[31] ^ lfsr_q[21] ^ lfsr_q[1] ^ lfsr_q[0]};
+    lfsr_d = lfsr_q; // Hold by default
+    if (obi_req_i.req && !obi_req_i.a.we)
+      lfsr_d = {lfsr_q[30:0], lfsr_q[31] ^ lfsr_q[21] ^ lfsr_q[1] ^ lfsr_q[0]};
   end
 
   // State register
@@ -22,50 +31,48 @@ module user_frng import croc_pkg::*; (
       lfsr_q <= lfsr_d;
   end
 
-  // Registers to hold request fields
-  logic req_d, req_q; // Request valid
-  logic we_d, we_q;   // Write enable
-  logic [SbrObiCfg.IdWidth-1:0] id_d, id_q; // Request ID
-
-  // Capture request fields
+  // Capture request fields (1st stage)
   assign req_d = obi_req_i.req;
   assign we_d  = obi_req_i.a.we;
   assign id_d  = obi_req_i.a.aid;
 
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      req_q <= '0;
-      we_q  <= '0;
-      id_q  <= '0;
-    end else begin
-      req_q <= req_d;
-      we_q  <= we_d;
-      id_q  <= id_d;
-    end
-  end
-
-  // Response logic
-  logic [SbrObiCfg.DataWidth-1:0] rsp_data;
-  logic rsp_err;
-
+  // Compute response (1st stage)
   always_comb begin
-    rsp_data = '0;
-    rsp_err  = '0;
+    rsp_data_d = '0;
+    rsp_err_d  = '0;
 
-    if (req_q) begin
-      if (!we_q) begin
-        rsp_data = lfsr_q; // Return the LFSR value
+    if (obi_req_i.req) begin
+      if (!obi_req_i.a.we) begin
+        rsp_data_d = lfsr_q;
       end else begin
-        rsp_err = 1'b1; // Writes are not supported
+        rsp_err_d = 1'b1;
       end
     end
   end
 
+  // Response registers (2nd stage)
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin
+      req_q       <= '0;
+      we_q        <= '0;
+      id_q        <= '0;
+      rsp_data_q  <= '0;
+      rsp_err_q   <= '0;
+    end else begin
+      req_q       <= req_d;
+      we_q        <= we_d;
+      id_q        <= id_d;
+      rsp_data_q  <= rsp_data_d;
+      rsp_err_q   <= rsp_err_d;
+    end
+  end
+
   // Wire the response
-  assign obi_rsp_o.gnt       = obi_req_i.req; // Grant signal
-  assign obi_rsp_o.r.rdata   = rsp_data;      // Response data
-  assign obi_rsp_o.r.rid     = id_q;          // Response ID
-  assign obi_rsp_o.r.err     = rsp_err;       // Response error
-  assign obi_rsp_o.r.r_optional = '0;         // Optional fields (if any)
+  assign obi_rsp_o.gnt            = obi_req_i.req; // Grant signal immediately
+  assign obi_rsp_o.rvalid         = req_q;              // Valid response after 2 cycles
+  assign obi_rsp_o.r.rdata        = rsp_data_q;
+  assign obi_rsp_o.r.rid          = id_q;
+  assign obi_rsp_o.r.err          = rsp_err_q;
+  assign obi_rsp_o.r.r_optional   = '0;
 
 endmodule
