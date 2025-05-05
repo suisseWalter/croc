@@ -109,10 +109,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 //-------------------------------------------------------------------------------------------------
 
   // User ROM
-  user_rom #(
-    .ObiCfg      ( SbrObiCfg     ),
-    .obi_req_t   ( sbr_obi_req_t ),
-    .obi_rsp_t   ( sbr_obi_rsp_t )
+  user_trng #(
   ) i_user_rom (
     .clk_i,
     .rst_ni,
