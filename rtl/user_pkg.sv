@@ -21,7 +21,7 @@ package user_pkg;
   // User Subordinate Address maps ////
   /////////////////////////////////////
 
-  localparam int unsigned NumUserDomainSubordinates = 1;
+  localparam int unsigned NumUserDomainSubordinates = 2;
 
   localparam bit [31:0] UserRomAddrOffset   = croc_pkg::UserBaseAddr; // 32'h2000_0000;
   localparam bit [31:0] UserRomAddrRange    = 32'h0000_1000;          // every subordinate has at least 4KB
@@ -33,6 +33,9 @@ package user_pkg;
   localparam bit [31:0] UserFrngAddrOffset = UserRomAddrOffset + UserRomAddrRange;
   localparam bit [31:0] UserFrngAddrRange  = 32'h0000_1000;
 
+    localparam bit [31:0] UserTrngAddrOffset = UserFrngAddrOffset + UserRomAddrRange;
+  localparam bit [31:0] UserTrngAddrRange  = 32'h0000_1000;
+x
 
   // Enum for bus indices
   typedef enum int {
@@ -42,7 +45,8 @@ package user_pkg;
 
   // Address rules given to address decoder
   localparam croc_pkg::addr_map_rule_t [NumDemuxSbrRules-1:0] user_addr_map = '{    
-    '{ idx:UserFrng, start_addr: UserFrngAddrOffset, end_addr: UserFrngAddrOffset + UserFrngAddrRange}
+    '{ idx:UserFrng, start_addr: UserFrngAddrOffset, end_addr: UserFrngAddrOffset + UserFrngAddrRange},
+    '{ idx:UserTrng, start_addr: UserTrngAddrOffset, end_addr: UserTrngAddrOffset + UserTrngAddrRange}
   };
 
 endpackage
