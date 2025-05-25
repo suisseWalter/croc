@@ -43,6 +43,20 @@ void printf(const char *fmt, ...) {
                     putchar(buffer[j]);
                 }
             }
+            else if (*fmt == 'c') { // char
+                putchar((char)va_arg(args, int));
+            } else if (*fmt == 's') { // string
+                const char *str = va_arg(args, const char *);
+                while (*str) {
+                    putchar(*str++);
+                }
+            } else if (*fmt == '%') { // literal %
+                putchar('%');
+            } else {
+                // unknown format, just print the character
+                putchar('%');
+                putchar(*fmt);
+            }
         } else {
             putchar(*fmt);
         }

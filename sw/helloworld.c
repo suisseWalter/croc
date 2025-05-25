@@ -38,7 +38,7 @@ int main() {
     printf("Hello World!\n");
     // wait until uart has finished sending
     uart_write_flush();
-
+    /* 
     // toggling some GPIOs
     gpio_set_direction(0xFFFF, 0x000F); // lowest four as outputs
     gpio_write(0x0A);  // ready output pattern
@@ -56,7 +56,7 @@ int main() {
     uint32_t start = get_mcycle();
     uint32_t res   = isqrt(1234567890UL);
     uint32_t end   = get_mcycle();
-    printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
+    printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start); */
     uart_write_flush();
     printf("Testing the changes\n");
     uart_write_flush();
@@ -66,9 +66,9 @@ int main() {
         uart_write_flush();
     } */
     printf("beginning FRNG reads\n");
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 1000000; i++) {
         uint32_t val = *reg32(USER_FRNG_BASE_ADDR, i * 4);
-        printf("FRNG word %x: %x\n", i, val);
+        printf("FRNG word, %x, %x\n", i, val);
         
     }
     uart_write_flush();
