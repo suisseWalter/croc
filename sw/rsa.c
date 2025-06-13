@@ -5,6 +5,10 @@
  * Reduced multiplication/division footprint where possible.
  *
  * Author: ChatGPT
+ * 
+ * Use this command to compile and run it. (start from the verilator directory
+ * cd ../sw && make bin/rsa.elf && riscv64-unknown-elf-objcopy -O verilog bin/rsa.elf bin/rsa.hex && cd ../verilator && verilator --binary -j 0 -Wno-fatal -Wno-style --timing --autoflush --trace --trace-structs -CFLAGS "-O0" --top tb_croc_soc -f croc.f && ./obj_dir/Vtb_croc_soc +binary="../sw/bin/rsa.hex"
+ * 
  */
 
 #include "uart.h"
@@ -31,6 +35,10 @@ static uint32_t hw_random32(void) {
 static uint32_t sw_state;
 static uint32_t sw_random32(void) {
     uint32_t x = sw_state;
+    x ^= x << 13;
+    x ^= x << 13;
+    x ^= x << 13;
+    x ^= x << 13;
     x ^= x << 13;
     x ^= x >> 17;
     x ^= x << 5;
@@ -104,11 +112,11 @@ void example_encrypt(const char *msg) {
     // generate blinding factor r in [2, N-1]
     uint32_t r;
     do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
+    /* do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
     do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
     do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
     do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
-    do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
-    do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N);
+    do { r = get_random32() % (RSA_N - 2) + 2; } while (r >= RSA_N); */
     uint32_t re = modexp(r, RSA_E);
     printf("r=%x, r^e=%x\n", r, re);
     uart_write_flush();
@@ -141,12 +149,15 @@ int main(void) {
     rng_init(0);
     printf("1000 software random numbers:\n");
     uart_write_flush();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1001; i++) {
         uint32_t r = get_random32();
     }
     rng_init(1);
     printf("Done.\n");
     uart_write_flush();
     example_encrypt("Hi");
-    while (1) {}
+    uart_write_flush();
+    printf("Testing complete.\n");
+    uart_write_flush();
+    return 0;
 }
