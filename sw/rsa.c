@@ -13,13 +13,13 @@
 
 #include "uart.h"
 #include "print.h"  // provides printf
-
+#include "util.h"
 // -----------------------------------------------------------------------------
 // FRNG hardware RNG
 // -----------------------------------------------------------------------------
 
 static inline uint32_t frng_read(uint32_t idx) {
-    return *(volatile uint32_t *)(USER_FRNG_BASE_ADDR + (idx & 0xFFu)*4);
+    return *reg32(USER_FRNG_BASE_ADDR, 0);
 }
 static uint32_t (*get_random32)(void) = 0;
 static uint32_t hw_random32(void) {
@@ -36,12 +36,9 @@ static uint32_t sw_state;
 static uint32_t sw_random32(void) {
     uint32_t x = sw_state;
     x ^= x << 13;
-    x ^= x << 13;
-    x ^= x << 13;
-    x ^= x << 13;
-    x ^= x << 13;
     x ^= x >> 17;
     x ^= x << 5;
+    x *= x;
     return sw_state = x;
 }
 
@@ -143,6 +140,7 @@ int main(void) {
     uart_write_flush();
     for (int i = 0; i < 1001; i++) {
         uint32_t r = get_random32();
+        printf("%x \n", r);
     }
     printf("Done.\n");
     uart_write_flush();
@@ -159,5 +157,5 @@ int main(void) {
     uart_write_flush();
     printf("Testing complete.\n");
     uart_write_flush();
-    return 0;
+    return 1;
 }

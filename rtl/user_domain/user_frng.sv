@@ -1,12 +1,9 @@
 module user_frng import croc_pkg::*; (
-  input  logic clk_i,
-  input  logic rst_ni,
-
-  input  sbr_obi_req_t obi_req_i,
-  output sbr_obi_rsp_t obi_rsp_o
+  input  logic            clk_i,
+  input  logic            rst_ni,
+  input  sbr_obi_req_t    obi_req_i,
+  output sbr_obi_rsp_t    obi_rsp_o
 );
-  // import OBI types and parameters
-
 
   // ============================================================================
   // 1. CORE DATA STRUCTURE
@@ -24,7 +21,7 @@ module user_frng import croc_pkg::*; (
   localparam TINYMT32_SH0  = 1;
   localparam TINYMT32_SH1  = 10;
   localparam TINYMT32_SH8  = 8;
-  localparam SEED_WORDS    = 4; // number of words in the seed SRAM
+  localparam SEED_WORDS    = 4;
 
   // ============================================================================
   // 3. INTERNAL SEED SRAM (READ-ONLY)
@@ -35,7 +32,6 @@ module user_frng import croc_pkg::*; (
   logic [31:0]  sram_wdata;
   logic [31:0]  sram_rdata;
 
-  // tie off writes
   assign sram_we    = 1'b0;
   assign sram_wdata = 32'd0;
 
@@ -45,7 +41,6 @@ module user_frng import croc_pkg::*; (
     .ByteWidth  (8),
     .NumPorts   (1),
     .Latency    (1),
-    //.SimInit    ("seed_mem.hex"),
     .PrintSimCfg(0)
   ) seed_sram (
     .clk_i   (clk_i),
@@ -61,7 +56,7 @@ module user_frng import croc_pkg::*; (
   );
 
   // ============================================================================
-  // 4. SEEDING FSM
+  // 4. SEEDING FSM COMBINATIONAL
   // ============================================================================
   typedef enum logic [1:0] { IDLE, READ, WAIT, DONE } seed_st_e;
   seed_st_e     seed_st_q, seed_st_d;
@@ -72,7 +67,6 @@ module user_frng import croc_pkg::*; (
     seed_cnt_d = seed_cnt_q;
     sram_req   = 1'b0;
     sram_addr  = seed_cnt_q;
-
     case (seed_st_q)
       IDLE:       seed_st_d = READ;
       READ: begin
@@ -80,9 +74,9 @@ module user_frng import croc_pkg::*; (
         seed_st_d = WAIT;
       end
       WAIT: begin
-        if (seed_cnt_q == SEED_WORDS-1) begin
+        if (seed_cnt_q == SEED_WORDS-1)
           seed_st_d = DONE;
-        end else begin
+        else begin
           seed_st_d  = READ;
           seed_cnt_d = seed_cnt_q + 1;
         end
@@ -92,7 +86,7 @@ module user_frng import croc_pkg::*; (
   end
 
   // ============================================================================
-  // 5. COMBINED SEED + STATE UPDATE
+  // 5. SYNC: SEEDING FSM + STATE REGISTER UPDATE
   // ============================================================================
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
@@ -106,16 +100,20 @@ module user_frng import croc_pkg::*; (
       mat2        <= 32'hFC78_FF1F;
       tmat        <= 32'h3793_FDFF;
     end else begin
-      seed_st_q   <= seed_st_d;
-      seed_cnt_q  <= seed_cnt_d;
+      // advance FSM
+      seed_st_q  <= seed_st_d;
+      seed_cnt_q <= seed_cnt_d;
+
       if (seed_st_q == WAIT) begin
+        // load seed words into state
         unique case (seed_cnt_q)
           2'd0: status_0_q <= 32'h7B78CF44 ^ sram_rdata;
           2'd1: status_1_q <= 32'h8F7011EE ^ sram_rdata;
           2'd2: status_2_q <= 32'hFC78FF1F ^ sram_rdata;
           2'd3: status_3_q <= 32'h3793FDFF ^ sram_rdata;
         endcase
-      end else begin
+      end else if (seed_st_q == DONE) begin
+        // normal TinyMT state update
         status_0_q <= status_0_d;
         status_1_q <= status_1_d;
         status_2_q <= status_2_d;
@@ -127,9 +125,9 @@ module user_frng import croc_pkg::*; (
   // ============================================================================
   // 6. STATE TRANSITION & TEMPERING
   // ============================================================================
-  logic seeded;
-  logic [31:0] x,y,a,b;
-  logic [31:0] t0,t1,tempered_output;
+  logic         seeded;
+  logic [31:0]  x, y, a, b;
+  logic [31:0]  t0, t1, tempered_output;
 
   assign seeded = (seed_st_q == DONE);
 
@@ -140,7 +138,7 @@ module user_frng import croc_pkg::*; (
     status_2_d = status_2_q;
     status_3_d = status_3_q;
 
-    if (seeded && obi_req_i.req && !obi_req_i.a.we) begin
+    if (seeded && req_q && !we_q) begin
       y = status_3_q;
       x = (status_0_q & TINYMT32_MASK) ^ status_1_q ^ status_2_q;
       x = x ^ (x << TINYMT32_SH0);
@@ -150,6 +148,7 @@ module user_frng import croc_pkg::*; (
       status_1_d = status_2_q;
       status_2_d = x ^ (y << TINYMT32_SH1);
       status_3_d = y;
+
       a = y[0] ? mat1 : 32'd0;
       b = y[0] ? mat2 : 32'd0;
       status_1_d = status_1_d ^ a;
@@ -173,23 +172,26 @@ module user_frng import croc_pkg::*; (
   logic                     we_d,  we_q;
   logic [SbrObiCfg.IdWidth-1:0] id_d, id_q;
   logic [31:0]              rsp_data_d, rsp_data_q;
-  logic                     rsp_err_d,  rsp_err_q;
+  logic                     rsp_err_d, rsp_err_q;
 
-  // stage 1 capture
+  // capture request
   assign req_d = obi_req_i.req;
   assign we_d  = obi_req_i.a.we;
   assign id_d  = obi_req_i.a.aid;
 
+  // compute response
   always_comb begin
     rsp_data_d = 32'd0;
     rsp_err_d  = 1'b0;
-    if (obi_req_i.req) begin
-      if (!obi_req_i.a.we) rsp_data_d = tempered_output;
-      else                 rsp_err_d  = 1'b1;
+    if (req_d) begin
+      if (!we_d)
+        rsp_data_d = tempered_output;
+      else
+        rsp_err_d  = 1'b1;
     end
   end
 
-  // stage 2 registers
+  // stage2 registers
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       req_q      <= 1'b0;
@@ -206,10 +208,8 @@ module user_frng import croc_pkg::*; (
     end
   end
 
-  // ============================================================================
-  // 8. OBI RESPONSE OUTPUT ASSIGNMENTS
-  // ============================================================================
-  assign obi_rsp_o.gnt          = obi_req_i.req;
+  // OBI response outputs
+  assign obi_rsp_o.gnt          = req_d;
   assign obi_rsp_o.rvalid       = req_q;
   assign obi_rsp_o.r.rdata      = rsp_data_q;
   assign obi_rsp_o.r.rid        = id_q;
