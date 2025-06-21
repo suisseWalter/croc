@@ -188,4 +188,4 @@ rtl/user_domain.sv
 rtl/croc_soc.sv
 rtl/croc_chip.sv
 rtl/user_domain/user_frng.sv
-
+rtl/user_domain/user_rom.sv

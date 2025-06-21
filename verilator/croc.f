@@ -291,10 +291,11 @@
 ../rtl/gpio/gpio.sv
 ../rtl/croc_domain.sv
 ../rtl/user_domain/user_frng.sv
+../rtl/user_domain/user_rom.sv
 ../rtl/user_domain.sv
 ../rtl/croc_soc.sv
 
-+define+TARGET_RTL
++define+TARGET_RTL  
 +define+TARGET_SYNTHESIS
 +define+TARGET_VERILATOR
 +define+SYNTHESIS

@@ -65,8 +65,23 @@ int main() {
         printf("TRNG word %x: %x\n", i, val);
         uart_write_flush();
     } */
+    printf("Address we want to read : %x, not %x \n", USER_ROM_BASE_ADDR, USER_FRNG_BASE_ADDR);
+    printf("Authors: ");
+    for (int i = 0; i < 8; i++) {
+        uint32_t val = *reg32(USER_ROM_BASE_ADDR, i * 4);
+        printf("%c%c%c%c",
+            (val >> 24) & 0xFF,
+            (val >> 16) & 0xFF,
+            (val >> 8)  & 0xFF,
+            (val >> 0)  & 0xFF
+        );
+    }
+    printf("\n");
+    
+printf("\n");
+    uart_write_flush();    
     printf("beginning FRNG reads\n");
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < 2; i++) {
         uint32_t val = *reg32(USER_FRNG_BASE_ADDR, i * 4);
         printf("FRNG word, %x, %x\n", i, val);
         
