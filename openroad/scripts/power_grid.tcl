@@ -40,7 +40,7 @@ set pgcrOffset [expr ($PowRingSpace - $pgcrSpacing - 2 * $pgcrWidth) / 2]
 
 # TopMetal2 Core Power Grid
 set tpg2Width     6; # arbitrary number
-set tpg2Pitch   204; # multiple of pad-pitch
+set tpg2Pitch   202; # multiple of pad-pitch
 set tpg2Spacing  60; # big enough to skip over a pad
 set tpg2Offset   97; # offset from leftX of core
 
@@ -54,9 +54,9 @@ set mprOffsetX 2.4
 set mprOffsetY 0.6
 
 # macro power grid (stripes on TopMetal1/TopMetal2 depending on orientation)
-set mpgWidth 6
+set mpgWidth 7
 set mpgSpacing 4
-set mpgOffset 20; # arbitrary
+set mpgOffset 15; # arbitrary
 
 ##########################################################################
 ##  SRAM power rings
@@ -119,6 +119,7 @@ add_pdn_stripe -grid {core_grid} -layer {Metal1} -width {0.44} -offset {0} \
 
 
 sram_power "sram_256x64"  "RM_IHPSG13_1P_256x64_c2_bm_bist"
+sram_power "sram_64x64"  "RM_IHPSG13_1P_64x64_c2_bm_bist"
 
 # Top power grid
 # Top 2 Stripe
