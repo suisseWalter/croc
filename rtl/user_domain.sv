@@ -73,8 +73,8 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   sbr_obi_req_t user_name_rom_obi_req;
   sbr_obi_rsp_t user_name_rom_obi_rsp;
 
-  assign user_name_rom_obi_req              = all_user_sbr_obi_req[UserNameRom];
-  assign all_user_sbr_obi_rsp[UserNameRom]  = user_name_rom_obi_rsp;
+  assign user_name_rom_obi_req              = all_user_sbr_obi_req[UserRom];
+  assign all_user_sbr_obi_rsp[UserRom]  = user_name_rom_obi_rsp;
 
 
   //-----------------------------------------------------------------------------------------------
