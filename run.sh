@@ -23,4 +23,9 @@ oseda yosys scripts/yosys_synthesis.tcl
 cd ../openroad/
 cp -r -n  ../ihp13/pdk/ihp-sg13g2/libs.ref/sg13g2_sram/* ../technology/
 wget https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/7747f88f70daaeb63f43ce36e71829707b7e3fa7/flow/platforms/ihp-sg13g2/IHP_rcx_patterns.rules
-oseda -2025.01 openroad scripts/chip.tcl 
+oseda -2025.05 openroad scripts/chip.tcl 
+cd ../klayout/
+cp ../openroad/out/{$PROJ_NAME}.def ../openroad/out/croc.def
+oseda -2025.01 ./def2gds.sh croc_chip ../openroad/out/croc.def
+cd ../
+icdesign ihp13 -update all &
