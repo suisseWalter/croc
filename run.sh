@@ -10,9 +10,9 @@ export TMP="tmp"
 export SV_FLIST="../croc.flist"
 git clone https://github.com/suisseWalter/croc.git $PROJ_NAME
 cd $PROJ_NAME
+git checkout cwa_rsa_seeding
 git submodule init
 git submodule update --recursive
-git checkout cwa_rsa_seeding
 icdesign ihp13 -update all -nogui
 cd yosys/
 mkdir tmp
