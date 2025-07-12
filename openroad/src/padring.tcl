@@ -18,15 +18,17 @@
 #   Pad  ground         -    4
 #
 #
-# final dimensions:                   [um]
-#   die area (4sqmm)       2000.0 x 2000.0
-#   io cell dimensions      180.0 x   80.0
-#   bonding pad area (est)   70.0 x   70.0
-#   seal ring width (est)    50.0 x    -
-#
+# final dimensions:         OLD       [um]   NEW       [um]
+#   die area (4sqmm)       2000.0 x 2000.0   2235 x 2235
+#   io cell dimensions      180.0 x   80.0    180 x  80
+#   bonding pad area (est)   70.0 x   70.0     70 x  70
+#   seal ring width (est)    50.0 x    - #     50 x  -
+#  
 # OpenROAD:
-#   OR die area            1760.0 x 1760.0
-#   core area              1400.0 x 1400.0
+#   OR die area = die area - 2x seal ring width - 2x bonding pad area
+#   OR die area            1995.0 x 1995.0
+#   core area = OR die area - 2x io cell dimensions
+#   core area              1635.0 x 1635.0
 #   total silicon area
 #
 # pad pitch (min)            90.0     90.0
