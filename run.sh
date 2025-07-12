@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PROJ_NAME=croc_oseda25_7
+export PROJ_NAME=croc_oseda25_7_2
 export NETLIST=../yosys/out/croc_chip_yosys.v
 export TOP_DESIGN=croc_chip
 export REPORTS=reports
@@ -11,8 +11,12 @@ export SV_FLIST="../croc.flist"
 git clone https://github.com/suisseWalter/croc.git $PROJ_NAME
 cd $PROJ_NAME
 git checkout cwa_rsa_seeding
-git submodule init
+git submodule init 
 git submodule update --recursive
+cd ihp13/pdk/ihp-sg13g2/libs.tech/klayout/python/pypreprocessor 
+git submodule init 
+git submodule update --recursive
+cd ../../../../../../../
 icdesign ihp13 -update all -nogui
 cd yosys/
 mkdir tmp
@@ -25,7 +29,7 @@ cp -r -n  ../ihp13/pdk/ihp-sg13g2/libs.ref/sg13g2_sram/* ../technology/
 wget https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/7747f88f70daaeb63f43ce36e71829707b7e3fa7/flow/platforms/ihp-sg13g2/IHP_rcx_patterns.rules
 oseda -2025.07 openroad scripts/chip.tcl 
 cd ../klayout/
-cp ../openroad/out/{$PROJ_NAME}.def ../openroad/out/croc.defd
-oseda -2025.07 ./def2gds.sh croc_chip ../openroad/out/croc.def
+cp ../openroad/out/$PROJ_NAME.def ../openroad/out/croc.def
+oseda -2024.09 ./def2gds.sh croc_chip ../openroad/out/croc.def
 cd ../
 icdesign ihp13 -update all &
