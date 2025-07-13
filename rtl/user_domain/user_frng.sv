@@ -74,7 +74,7 @@ module user_frng import croc_pkg::*; (
         seed_st_d = WAIT;
       end
       WAIT: begin
-        if (seed_cnt_q == SEED_WORDS-1)
+        if (seed_cnt_q == 4-1)
           seed_st_d = DONE;
         else begin
           seed_st_d  = READ;
