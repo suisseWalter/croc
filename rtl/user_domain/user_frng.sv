@@ -86,7 +86,16 @@ module user_frng import croc_pkg::*; (
   end
 
   // ============================================================================
-  // 5. SYNC: SEEDING FSM + STATE REGISTER UPDATE
+  // 5. MANUAL SEEDING LOGIC
+  // ============================================================================
+  // mini reg storage: 4 words of 32 bits & reseed trigger as a 5th word
+  logic [SbrObiCfg.DataWidth-1:0] mem [0:4];
+  logic manual_seed_trigger;
+  
+  assign manual_seed_trigger = (mem[4] == 32'hFFFF_FFFF);
+
+  // ============================================================================
+  // 6. SYNC: SEEDING FSM + STATE REGISTER UPDATE
   // ============================================================================
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
@@ -104,7 +113,16 @@ module user_frng import croc_pkg::*; (
       seed_st_q  <= seed_st_d;
       seed_cnt_q <= seed_cnt_d;
 
-      if (seed_st_q == WAIT) begin
+      // Check for manual seeding trigger
+      if (manual_seed_trigger) begin
+        // Overwrite status registers with mem[0] through mem[3]
+        status_0_q <= mem[0];
+        status_1_q <= mem[1];
+        status_2_q <= mem[2];
+        status_3_q <= mem[3];
+        // Clear the trigger
+        mem[4] <= 32'h0000_0000;
+      end else if (seed_st_q == WAIT) begin
         // load seed words into state
         unique case (seed_cnt_q)
           2'd0: status_0_q <= 32'h7B78CF44 ^ sram_rdata;
@@ -123,7 +141,7 @@ module user_frng import croc_pkg::*; (
   end
 
   // ============================================================================
-  // 6. STATE TRANSITION & TEMPERING
+  // 7. STATE TRANSITION & TEMPERING
   // ============================================================================
   logic         seeded;
   logic [31:0]  x, y, a, b;
@@ -166,18 +184,23 @@ module user_frng import croc_pkg::*; (
   end
 
   // ============================================================================
-  // 7. OBI INTERFACE LOGIC
+  // 8. OBI INTERFACE LOGIC
   // ============================================================================
   logic                     req_d, req_q;
   logic                     we_d,  we_q;
   logic [SbrObiCfg.IdWidth-1:0] id_d, id_q;
   logic [31:0]              rsp_data_d, rsp_data_q;
   logic                     rsp_err_d, rsp_err_q;
+  logic [31:0]              wdata_q, data_d;
+  logic [SbrObiCfg.AddrWidth-1:0] addr_q;
+  logic [SbrObiCfg.AddrWidth-1:0] addr_d;
 
   // capture request
   assign req_d = obi_req_i.req;
   assign we_d  = obi_req_i.a.we;
   assign id_d  = obi_req_i.a.aid;
+  assign data_d = obi_req_i.a.wdata;
+  assign addr_d = obi_req_i.a.addr;
 
   // compute response
   always_comb begin
@@ -187,7 +210,7 @@ module user_frng import croc_pkg::*; (
       if (!we_d)
         rsp_data_d = tempered_output;
       else
-        rsp_err_d  = 1'b1;
+        rsp_data_d  =32'd0;
     end
   end
 
@@ -199,12 +222,44 @@ module user_frng import croc_pkg::*; (
       id_q       <= '0;
       rsp_data_q <= 32'd0;
       rsp_err_q  <= 1'b0;
+      wdata_q    <= 32'd0;
+      addr_q     <= '0;
     end else begin
       req_q      <= req_d;
       we_q       <= we_d;
       id_q       <= id_d;
       rsp_data_q <= rsp_data_d;
       rsp_err_q  <= rsp_err_d;
+      wdata_q    <= data_d;
+      addr_q     <= addr_d;
+    end
+  end
+
+  // ============================================================================
+  // 9. MEMORY BANK LOGIC
+  // ============================================================================
+  // Read & write logic
+  logic [2:0] word_addr;
+  logic [SbrObiCfg.DataWidth-1:0] rsp_data;
+  logic rsp_err;
+
+  assign word_addr = addr_q[4:2];
+
+  always_ff @(posedge clk_i) begin
+    if (req_q && we_q && word_addr < 5)
+      mem[word_addr] <= wdata_q;
+  end
+
+  always_comb begin
+    rsp_data = '0;
+    rsp_err  = '0;
+
+    if (req_q) begin
+      if (word_addr >= 8) begin
+        rsp_err = 1'b1;
+      end else if (!we_q) begin
+        rsp_data = mem[word_addr];
+      end
     end
   end
 
