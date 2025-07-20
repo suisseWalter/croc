@@ -136,23 +136,14 @@ int main(void) {
     uart_init();
     rng_init(1);
     printf("RNG+RSA Demo\n");
-    printf("1000 hardware random numbers:\n");
+    printf("9990 hardware random numbers:\n");
     uart_write_flush();
-    for (int i = 0; i < 1001; i++) {
+    for (int i = 0; i < 99991; i++) {
         uint32_t r = get_random32();
-        printf("%x \n", r);
     }
-    printf("Done.\n");
+    printf("HW Done.\n");
     uart_write_flush();
     rng_init(0);
-    printf("1000 software random numbers:\n");
-    uart_write_flush();
-    for (int i = 0; i < 1001; i++) {
-        uint32_t r = get_random32();
-    }
-    rng_init(1);
-    printf("Done.\n");
-    uart_write_flush();
     example_encrypt("Hi");
     uart_write_flush();
     printf("Testing complete.\n");

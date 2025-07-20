@@ -119,7 +119,7 @@ add_pdn_stripe -grid {core_grid} -layer {Metal1} -width {0.44} -offset {0} \
 
 
 sram_power "sram_256x64"  "RM_IHPSG13_1P_256x64_c2_bm_bist"
-sram_power "sram_64x64"  "RM_IHPSG13_1P_64x64_c2_bm_bist"
+sram_power "sram_256x64"  "RM_IHPSG13_1P_256x64_c2_bm_bist"
 
 # Top power grid
 # Top 2 Stripe
