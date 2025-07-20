@@ -71,6 +71,7 @@ module user_rom #(
                     4'h5: rsp_data = 32'h69616e20; // "ian "
                     4'h6: rsp_data = 32'h4d63436f; // "McCo"
                     4'h7: rsp_data = 32'h75727420; // "urt "
+                    4'h8: rsp_data = 32'h00000000; // zero-termination
                     default: rsp_data = 32'h0;
                 endcase
             end else begin
