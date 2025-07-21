@@ -21,7 +21,7 @@ module user_frng import croc_pkg::*; (
   localparam TINYMT32_SH0  = 1;
   localparam TINYMT32_SH1  = 10;
   localparam TINYMT32_SH8  = 8;
-  localparam SEED_WORDS    = 256;
+  localparam SEED_WORDS    = 512;
 
   // ============================================================================
   // 3. INTERNAL SEED SRAM (READ-ONLY)
@@ -37,7 +37,7 @@ module user_frng import croc_pkg::*; (
 
   tc_sram_impl #(
     .NumWords   (SEED_WORDS),
-    .DataWidth  (64),
+    .DataWidth  (32),
     .ByteWidth  (8),
     .NumPorts   (1),
     .Latency    (1),
