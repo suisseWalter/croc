@@ -39,9 +39,6 @@ source src/padring.tcl
 set RamMaster256x64   [[ord::get_db] findMaster "RM_IHPSG13_1P_256x64_c2_bm_bist"]
 set RamSize256x64_W   [ord::dbu_to_microns [$RamMaster256x64 getWidth]]
 set RamSize256x64_H   [ord::dbu_to_microns [$RamMaster256x64 getHeight]]
-set RamMaster64x64    [[ord::get_db] findMaster "RM_IHPSG13_1P_64x64_c2_bm_bist"]
-set RamSize64x64_W    [ord::dbu_to_microns [$RamMaster64x64 getWidth]]
-set RamSize64x64_H    [ord::dbu_to_microns [$RamMaster64x64 getHeight]]
 
 ##########################################################################
 # Chip and Core Area
