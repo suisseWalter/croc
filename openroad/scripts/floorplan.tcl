@@ -95,8 +95,8 @@ set Y [expr $Y - $RamSize256x64_H - 15]
 placeInstance $bank1_sram0 $X $Y R0
 
 # RNG_Bank
-set X [expr $floor_midpointX - $RamSize256x64_W/2]
-set Y [expr $floor_bottomY - $RamSize256x64_H + 100]
+set X [expr $X]
+set Y [expr $Y - $RamSize256x64_H -100]
 placeInstance $seed_sram $X $Y R0
 
 cut_rows -halo_width_x 2 -halo_width_y 1
