@@ -58,26 +58,23 @@ module user_rom #(
     always_comb begin
         rsp_data = '0;
         rsp_err  = '0;
-        word_addr = addr_q[4:2];
-        
-        if (req_q) begin
-            if (~we_q) begin
-                case (word_addr)
-                    4'h0: rsp_data = 32'h436c656d; // "Clem"
-                    4'h1: rsp_data = 32'h656e7320; // "ens "
-                    4'h2: rsp_data = 32'h57616c74; // "Walt"
-                    4'h3: rsp_data = 32'h65722020; // "er  "
-                    4'h4: rsp_data = 32'h4b696c6c; // "Kill"
-                    4'h5: rsp_data = 32'h69616e20; // "ian "
-                    4'h6: rsp_data = 32'h4d63436f; // "McCo"
-                    4'h7: rsp_data = 32'h75727420; // "urt "
-                    4'h8: rsp_data = 32'h00000000; // zero-termination
-                    default: rsp_data = 32'h0;
-                endcase
-            end else begin
-                rsp_err = '1;
-            end
+     word_addr = addr_q[5:2];
+    if (req_q) begin
+        if (~we_q) begin
+            case (word_addr)
+                4'h0: rsp_data = 32'h436c656d; // "Clem"
+                4'h1: rsp_data = 32'h656e7320; // "ens "
+                4'h2: rsp_data = 32'h57616c74; // "Walt"
+                4'h3: rsp_data = 32'h65722020; // "er  "
+                4'h4: rsp_data = 32'h4b696c6c; // "Kill"
+                4'h5: rsp_data = 32'h69616e20; // "ian "
+                4'h6: rsp_data = 32'h4d63436f; // "McCo"
+                4'h7: rsp_data = 32'h75727420; // "urt "
+                4'h8: rsp_data = 32'h00000000; // zero-termination
+                default: rsp_data = 32'h0;
+            endcase
         end
+    end
     end
 
     // Wire the response
