@@ -271,7 +271,7 @@ grt::set_verbose 0
 utl::report "Perform buffer insertion..."
 repair_design -verbose
 utl::report "Repair setup and hold violations..."
-repair_timing -skip_pin_swap -setup -setup_margin 0.1 -verbose -repair_tns 100
+repair_timing -skip_pin_swap -setup -verbose -repair_tns 100
 repair_timing -skip_pin_swap -hold -hold_margin 0.1 -verbose -repair_tns 100
 
 utl::report "GRT incremental..."
