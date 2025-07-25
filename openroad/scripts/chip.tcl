@@ -116,9 +116,9 @@ utl::report "###################################################################
 
 set_thread_count 8
 
-set GPL_ARGS {  -density 0.60 }
+set GPL_ARGS {  -density 0.50 }
 
-set GPL2_ARGS { -density 0.60
+set GPL2_ARGS { -density 0.50
                 -routability_driven
                 -routability_check_overflow 0.30
                 -timing_driven }
@@ -271,7 +271,7 @@ grt::set_verbose 0
 utl::report "Perform buffer insertion..."
 repair_design -verbose
 utl::report "Repair setup and hold violations..."
-repair_timing -skip_pin_swap -setup -verbose -repair_tns 100
+repair_timing -skip_pin_swap -setup setup_margin 0.1 -verbose -repair_tns 100
 repair_timing -skip_pin_swap -hold -hold_margin 0.1 -verbose -repair_tns 100
 
 utl::report "GRT incremental..."
@@ -301,7 +301,7 @@ utl::report "# Step ${log_id_str}: DETAILED ROUTE"
 utl::report "###############################################################################"
 
 # Requires LEF cell with class 'CORE ANTENNACELL', otherwise you need to give a cell
-repair_antennas -ratio_margin 30 -iterations 5
+repair_antennas -ratio_margin 30 -iterations 10
 # check_antennas
 
 utl::report "Detailed route"
